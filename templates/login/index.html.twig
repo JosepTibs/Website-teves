@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="overlay">
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="auth-link">
+            Don’t have an account yet?
+            <a href="{{ path('app_signup') }}">Sign up</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
