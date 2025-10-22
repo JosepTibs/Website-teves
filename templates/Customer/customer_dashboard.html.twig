@@ -1,0 +1,129 @@
+{# templates/Customer/customer_dashboard.html.twig #}
+{% extends 'Customer/base_customer.html.twig' %}
+
+{% block title %}Customer Dashboard — Le Fromage{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <section class="md:col-span-3 space-y-6">
+
+    <!-- Quick actions -->
+    <div class="flex flex-col sm:flex-row items-stretch gap-4">
+      <a href="{{ path('customer.reservation') }}"
+         class="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-[var(--brand-gold)] text-[var(--brand-black)] font-medium hover:brightness-95 focus-gold">
+        Make Reservation & Pre-order
+      </a>
+      <a href="{{ path('customer_menu') }}"
+         class="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg card border border-[var(--border-light)] text-[var(--text-light)] hover:bg-[var(--bg-dark)]">
+        Browse Menu
+      </a>
+      <a href="{{ path('app_order_new') }}"
+         class="inline-flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border-light)] card text-[var(--text-light)] hover:bg-[var(--bg-dark)]">
+        View My Orders
+      </a>
+    </div>
+
+    <!-- Chef's Picks -->
+    <section class="card p-4 shadow">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-[var(--brand-gold)]">Chef's Picks — Main Course</h2>
+        <a href="{{ path('customer_menu') }}" class="text-sm text-[var(--text-muted)] hover:text-[var(--brand-gold)]">See all</a>
+      </div>
+
+      {% if chefs_picks is empty %}
+        <p class="text-sm text-[var(--text-muted)]">No featured dishes available.</p>
+      {% else %}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {% for dish in chefs_picks %}
+            <article class="rounded-lg overflow-hidden card border border-[var(--border-light)]">
+              {% if dish.image %}
+                <div class="h-40 bg-cover bg-center" style="background-image: url('{{ asset('uploads/images/' ~ dish.image) }}')"></div>
+              {% else %}
+                <div class="h-40 bg-[#2f2f2f] flex items-center justify-center text-[var(--text-muted)] text-sm">No image</div>
+              {% endif %}
+              <div class="p-3">
+                <div class="flex items-start justify-between">
+                  <h3 class="font-medium text-sm text-[var(--text-light)]">{{ dish.name }}</h3>
+                  <div class="font-semibold text-[var(--brand-gold)]">₱{{ dish.price|number_format(2, '.', ',') }}</div>
+                </div>
+                <p class="text-xs text-[var(--text-muted)] mt-2">{{ dish.description|default('No description') }}</p>
+                <div class="mt-3 flex items-center gap-2">
+                  <a href="{{ path('customer_menu') }}" class="text-sm underline text-[var(--text-muted)]">Details</a>
+                  <a href="{{ path('app_order_new') }}" class="ml-auto px-3 py-1 rounded-md bg-[var(--brand-gold)] text-[var(--brand-black)] text-sm hover:brightness-95">Add</a>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- Orders & Reservations -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="card p-4 shadow">
+        <h3 class="font-semibold mb-3 text-[var(--brand-gold)]">Recent Orders</h3>
+        {% if orders is empty %}
+          <p class="text-sm text-[var(--text-muted)]">None</p>
+        {% else %}
+          <ul class="space-y-2 text-sm text-[var(--text-light)]">
+            {% for order in orders %}
+              <li>Order #{{ order.id }} — ₱{{ order.totalPrice|number_format(2, '.', ',') }} — {{ order.status }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="card p-4 shadow">
+        <h3 class="font-semibold mb-3 text-[var(--brand-gold)]">Reservations</h3>
+        {% if reservations is empty %}
+          <p class="text-sm text-[var(--text-muted)]">None</p>
+        {% else %}
+          <ul class="space-y-2 text-sm text-[var(--text-light)]">
+            {% for reservation in reservations %}
+              <li>
+                Table {{ reservation.tableNumber ?? 'N/A' }}
+                — {{ reservation.date|date('M d, Y g:i A') }}
+                — Status: {{ reservation.status }}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </section>
+  </section>
+
+  <!-- Sidebar -->
+  <aside class="space-y-4">
+    <div class="card p-4 shadow">
+      <div class="flex items-center gap-3">
+        <div class="w-14 h-14 rounded-full overflow-hidden">
+          <img src="/images/default-avatar.png" alt="avatar" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <div class="font-medium text-[var(--text-light)]">Guest Customer</div>
+          <div class="text-xs text-[var(--text-muted)]">guest@example.com</div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <a href="#" class="block text-sm px-3 py-2 rounded-md border border-[var(--border-light)] text-center text-[var(--text-light)] hover:bg-[var(--brand-gold)] hover:text-[var(--bg-dark)]">My Profile</a>
+      </div>
+    </div>
+
+    <div class="card p-4 shadow">
+      <h4 class="font-semibold mb-2 text-[var(--brand-gold)]">Quick Links</h4>
+      <ul class="space-y-2 text-sm text-[var(--text-muted)]">
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Contact Support</a></li>
+        <li><a href="#">Terms & Privacy</a></li>
+      </ul>
+    </div>
+
+    <div class="card p-4 shadow text-sm">
+      <h4 class="font-semibold mb-2 text-[var(--brand-gold)]">Service Promise</h4>
+      <p class="text-[var(--text-muted)]">
+        Choose the “Prepare before arrival” option during reservation and enjoy immediate service upon arrival — our kitchen will ensure top quality and timely preparation.
+      </p>
+    </div>
+  </aside>
+</div>
+{% endblock %}

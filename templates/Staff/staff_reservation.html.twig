@@ -1,0 +1,107 @@
+{% extends 'Staff/base_staff.html.twig' %}
+
+{% block title %}Manage Reservations — Le Fromage{% endblock %}
+
+{% block body %}
+<h1 class="text-3xl font-semibold text-[var(--brand-gold)] mb-8 text-center tracking-wide">
+  Manage Reservations
+</h1>
+
+{% for message in app.flashes('success') %}
+  <div class="mb-6 p-4 bg-green-800/30 border border-green-500/50 text-green-300 rounded-md shadow-sm">
+    {{ message }}
+  </div>
+{% endfor %}
+
+{% if reservations is empty %}
+  <p class="text-center text-[var(--text-muted)]">No reservations yet.</p>
+{% else %}
+  <div class="overflow-x-auto">
+    <table id="reservationsTable" class="display w-full border-collapse text-[var(--text-light)] bg-[#2f2f2f] rounded-xl shadow-lg">
+      <thead class="bg-[var(--brand-gold)]/20 text-[var(--brand-gold)]">
+        <tr>
+          <th class="py-3 px-4 text-left">Customer</th>
+          <th class="py-3 px-4 text-left">Email</th>
+          <th class="py-3 px-4 text-left">Date</th>
+          <th class="py-3 px-4 text-left">Guests</th>
+          <th class="py-3 px-4 text-left">Table</th>
+          <th class="py-3 px-4 text-left">Status</th>
+          <th class="py-3 px-4 text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reservation in reservations %}
+          <tr class="border-b border-[var(--brand-gold)]/10 hover:bg-[#3a3a3a] transition">
+            <td class="py-3 px-4">{{ reservation.customerName }}</td>
+            <td class="py-3 px-4">{{ reservation.email }}</td>
+            <td class="py-3 px-4">{{ reservation.date|date('M d, Y g:i A') }}</td>
+            <td class="py-3 px-4">{{ reservation.guests }}</td>
+            <td class="py-3 px-4">{{ reservation.tableNumber ?? '—' }}</td>
+            <td class="py-3 px-4 font-semibold">
+              {% if reservation.status == 'Pending' %}
+                <span class="text-yellow-400">{{ reservation.status }}</span>
+              {% elseif reservation.status == 'Confirmed' %}
+                <span class="text-green-400">{{ reservation.status }}</span>
+              {% else %}
+                <span class="text-red-400">{{ reservation.status }}</span>
+              {% endif %}
+            </td>
+            <td class="py-3 px-4 text-center">
+              <form method="post" action="{{ path('staff_reservations_update_status', {id: reservation.id}) }}" class="inline-flex gap-2">
+                <button name="status" value="Confirmed" class="bg-green-700 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium">
+                  Confirm
+                </button>
+                <button name="status" value="Declined" class="bg-red-700 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm font-medium">
+                  Decline
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+{# --- DataTables CDN --- #}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    new DataTable('#reservationsTable', {
+      pageLength: 10,
+      order: [[2, 'desc']], // Sort by Date descending
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search reservations..."
+      },
+      columnDefs: [
+        { orderable: false, targets: [6] } // Disable sorting on Action column
+      ]
+    });
+  });
+</script>
+
+{% block styles %}
+<style>
+  table th, table td {
+    border-color: rgba(212, 175, 55, 0.2);
+  }
+  .dataTables_wrapper .dataTables_filter input {
+    background: #1f1f1f;
+    border: 1px solid rgba(212,175,55,0.4);
+    color: var(--brand-gold);
+    border-radius: 8px;
+    padding: 4px 8px;
+  }
+  .dataTables_wrapper .dataTables_length select {
+    background: #1f1f1f;
+    color: var(--brand-gold);
+    border: 1px solid rgba(212,175,55,0.4);
+    border-radius: 6px;
+  }
+</style>
+{% endblock %}
+{% endblock %}

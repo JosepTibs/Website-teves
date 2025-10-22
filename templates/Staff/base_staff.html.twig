@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Staff — Le Fromage{% endblock %}
+
+{% block body %}
+  {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}{{ parent() }}{% endblock %}
+
+{% block javascripts %}{{ parent() }}{% endblock %}
+
+{% block header %}
+  <header class="border-b border-[var(--brand-gold)]/30 shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-semibold gold-gradient tracking-wider">
+        Le Fromage Staff
+      </a>
+      <nav class="space-x-6">
+        <a href="{{ path('staff_dashboard') }}" class="text-[var(--text-muted)] hover:text-[var(--brand-gold)] transition">Dashboard</a>
+        <a href="/menu/manage" class="text-[var(--text-muted)] hover:text-[var(--brand-gold)] transition">Menu</a>
+        <a href="/staff/reservations" class="text-[var(--text-muted)] hover:text-[var(--brand-gold)] transition">Reservations</a>
+        <a href="/staff/reservations" class="text-[var(--text-muted)] hover:text-[var(--brand-gold)] transition">Order</a>
+        <a href="/staff/reservations" class="text-[var(--text-muted)] hover:text-[var(--brand-gold)] transition">Logout</a>
+      </nav>
+    </div>
+  </header>
+{% endblock %}

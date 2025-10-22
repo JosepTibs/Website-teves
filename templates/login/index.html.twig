@@ -1,29 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Login{% endblock %}
-
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-{% endblock %}
+{% block title %}Login — Le Fromage{% endblock %}
 
 {% block body %}
-<div class="overlay">
-    <div class="login-container">
-        <h2>Login</h2>
-        <form method="post">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+<div class="min-h-screen flex items-center justify-center bg-[var(--bg-dark)] p-6">
+  <div class="w-full max-w-md bg-[var(--bg-darker)] border border-[var(--brand-gold)]/20 rounded-2xl shadow-2xl p-8">
+    
+    <!-- Logo / Title -->
+    <h2 class="text-3xl font-semibold text-center text-[var(--brand-gold)] mb-2 tracking-wide">Le Fromage</h2>
+    <p class="text-center text-[var(--text-muted)] text-sm mb-6">Login to your account</p>
+    
+    <form method="post" class="space-y-5">
+      <!-- Username -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-[var(--text-light)] mb-1">Username</label>
+        <input type="text" id="username" name="username" required
+               class="mt-1 w-full rounded-lg bg-[var(--bg-input)] border border-[var(--brand-gold)]/30 focus:border-[var(--brand-gold)] focus:ring-[var(--brand-gold)] p-3 text-[var(--text-light)] placeholder-gray-400 transition duration-150 ease-in-out" 
+               placeholder="Enter your username" />
+      </div>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+      <!-- Password -->
+      <div>
+        <label for="password" class="block text-sm font-medium text-[var(--text-light)] mb-1">Password</label>
+        <input type="password" id="password" name="password" required
+               class="mt-1 w-full rounded-lg bg-[var(--bg-input)] border border-[var(--brand-gold)]/30 focus:border-[var(--brand-gold)] focus:ring-[var(--brand-gold)] p-3 text-[var(--text-light)] placeholder-gray-400 transition duration-150 ease-in-out"
+               placeholder="Enter your password" />
+      </div>
 
-            <button type="submit">Login</button>
-        </form>
+      <!-- Submit -->
+      <button type="submit"
+              class="w-full bg-[var(--brand-gold)] hover:bg-yellow-500 text-black font-semibold rounded-lg py-3 transition duration-200 shadow-md hover:shadow-lg">
+        Login
+      </button>
+    </form>
 
-        <div class="auth-link">
-            Don’t have an account yet?
-            <a href="{{ path('app_signup') }}">Sign up</a>
-        </div>
-    </div>
+    <!-- Signup link -->
+    <p class="mt-6 text-center text-sm text-[var(--text-muted)]">
+      Don’t have an account yet?
+      <a href="{{ path('app_signup') }}" class="text-[var(--brand-gold)] font-semibold hover:underline">Sign up</a>
+    </p>
+  </div>
 </div>
 {% endblock %}

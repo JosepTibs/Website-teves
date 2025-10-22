@@ -1,0 +1,42 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${test_website_root_password}
+      MYSQL_DATABASE: ${test_website_db}
+      MYSQL_USER: ${test_website_user}
+      MYSQL_PASSWORD: ${test_website_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - test_website_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: ${test_website_user}
+      PMA_PASSWORD: ${test_website_password}
+    ports:
+    - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - test_website_network
+
+volumes:
+  mysql_data:
+
+networks:
+  test_website_network:
+
+parameters:
+    # path to store uploaded images (make sure the folder exists)
+    images_directory: '%kernel.project_dir%/public/uploads/images'
+
+

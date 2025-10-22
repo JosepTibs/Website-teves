@@ -1,0 +1,119 @@
+{% extends 'Customer/base_customer.html.twig' %}
+
+{% block title %}Menu — Le Fromage{% endblock %}
+
+{% block body %}
+<section class="py-10 px-6">
+  <h1 class="text-4xl font-semibold text-[var(--brand-gold)] mb-10 tracking-widest uppercase text-center">
+    Our Menu
+  </h1>
+
+  {% if dishes is not empty %}
+    {# --- Group dishes by category --- #}
+    {% set grouped = {} %}
+    {% for dish in dishes %}
+      {% set cat = dish.category|default('Uncategorized') %}
+      {% if grouped[cat] is not defined %}
+        {% set grouped = grouped|merge({ (cat): [dish] }) %}
+      {% else %}
+        {% set grouped = grouped|merge({ (cat): grouped[cat]|merge([dish]) }) %}
+      {% endif %}
+    {% endfor %}
+
+    {% for category, catDishes in grouped %}
+      <div class="mb-16">
+        <h2 class="text-2xl font-semibold text-[var(--brand-gold)] border-b border-[var(--brand-gold)]/30 pb-2 mb-8">
+          {{ category }}
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {% for dish in catDishes %}
+            <div 
+              class="group bg-[var(--bg-darker)] rounded-2xl overflow-hidden border border-[var(--brand-gold)]/20 shadow-md hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition duration-300 flex flex-col cursor-pointer"
+              onclick="openOrderModal('{{ dish.id }}')"
+            >
+              <div class="h-124 overflow-hidden">
+                {% if dish.image %}
+                  <img src="{{ asset('uploads/images/' ~ dish.image) }}" alt="{{ dish.name }}" 
+                       class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                {% else %}
+                  <img src="{{ asset('images/placeholder.png') }}" alt="No image"
+                       class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                {% endif %}
+              </div>
+
+              <div class="p-6 text-left flex flex-col justify-between h-full">
+                <div>
+                  <h3 class="text-xl font-semibold text-[var(--brand-gold)] mb-2">{{ dish.name }}</h3>
+                  {% if dish.description %}
+                    <p class="text-[var(--text-muted)] text-sm mb-4">{{ dish.description }}</p>
+                  {% endif %}
+                </div>
+
+                <div class="flex justify-between items-center mt-auto">
+                  <span class="text-lg font-semibold text-[var(--brand-gold)]">
+                    ₱{{ dish.price|number_format(2, '.', ',') }}
+                  </span>
+                  <button 
+                    class="bg-[var(--brand-gold)] hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-lg transition"
+                    onclick="event.stopPropagation(); openOrderModal('{{ dish.id }}')"
+                  >
+                    Order
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {# --- Order Modal --- #}
+            <div id="order-modal-{{ dish.id }}" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm items-center justify-center">
+              <div class="bg-[var(--bg-darker)] border border-[var(--brand-gold)]/40 rounded-2xl max-w-lg w-full mx-4 overflow-hidden shadow-lg relative">
+                <div>
+                  {% if dish.image %}
+                    <img src="{{ asset('uploads/images/' ~ dish.image) }}" alt="{{ dish.name }}" class="w-full h-72 object-cover">
+                  {% else %}
+                    <img src="{{ asset('images/placeholder.png') }}" alt="No image" class="w-full h-72 object-cover">
+                  {% endif %}
+                  <button onclick="closeOrderModal('{{ dish.id }}')" class="absolute top-4 right-4 bg-black/70 text-white rounded-full px-3 py-1 hover:bg-red-600 transition">
+                    ✕
+                  </button>
+                </div>
+                <div class="p-6 text-left">
+                  <h3 class="text-2xl font-bold text-[var(--brand-gold)] mb-2">{{ dish.name }}</h3>
+                  <p class="text-[var(--text-muted)] mb-4">{{ dish.description }}</p>
+                  <p class="text-xl font-semibold text-[var(--brand-gold)] mb-6">
+                    ₱{{ dish.price|number_format(2, '.', ',') }}
+                  </p>
+                  <div class="flex gap-3">
+                    <button class="bg-[var(--brand-gold)] hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-lg transition w-full">
+                      Order Now
+                    </button>
+                    <button onclick="closeOrderModal('{{ dish.id }}')" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-6 rounded-lg transition w-full">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-center text-[var(--text-muted)]">No dishes available at the moment.</p>
+  {% endif %}
+</section>
+
+<script>
+  function openOrderModal(id) {
+    const modal = document.getElementById(`order-modal-${id}`);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex'); // ✅ your version — correct
+  }
+
+  function closeOrderModal(id) {
+    const modal = document.getElementById(`order-modal-${id}`);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+</script>
+{% endblock %}

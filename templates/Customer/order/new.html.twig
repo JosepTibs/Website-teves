@@ -1,0 +1,145 @@
+{% extends 'Customer/customer_menu.html.twig' %}
+
+{% block title %}Place an Order — Le Fromage{% endblock %}
+
+{% block body %}
+<section class="py-10 px-6">
+  <h1 class="text-4xl font-semibold text-[var(--brand-gold)] tracking-widest uppercase text-center mb-10">
+    Place an Order
+  </h1>
+
+  <div class="max-w-7xl mx-auto bg-gray-950 border border-[var(--brand-gold)]/20 rounded-2xl p-10 shadow-lg">
+    {{ form_start(form, {'attr': {'id': 'order-form'}}) }}
+
+    {# --- Dish Selection Section --- #}
+    <div>
+      <h2 class="text-xl text-[var(--brand-gold)] mb-8 font-semibold text-center uppercase tracking-wide">
+        Select Your Dishes
+      </h2>
+
+      {# Loop Through Categories #}
+      <div class="space-y-14">
+        {% for category, dishes in dishesByCategory %}
+          <div>
+            <h3 class="text-2xl font-semibold text-[var(--brand-gold)] mb-6 text-center uppercase tracking-widest border-b border-[var(--brand-gold)]/30 pb-2">
+              {{ category }}
+            </h3>
+
+            {# Responsive Dish Grid #}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+              {% for dish in dishes %}
+                <div class="bg-[#2a2a2a] border border-[var(--brand-gold)]/30 rounded-2xl overflow-hidden flex flex-col shadow-md hover:border-[var(--brand-gold)]/60 transition">
+                  {% if dish.getImage() %}
+                    <img src="{{ asset('uploads/images/' ~ dish.getImage()) }}"
+                         alt="{{ dish.name }}"
+                         class="h-44 w-full object-cover">
+                  {% else %}
+                    <div class="h-44 bg-gray-700 flex items-center justify-center text-gray-400 italic">
+                      No image
+                    </div>
+                  {% endif %}
+
+                  <div class="p-4 flex flex-col justify-between flex-grow">
+                    <div>
+                      <h4 class="text-lg font-semibold text-[var(--brand-gold)] mb-1">{{ dish.name }}</h4>
+                      {% if dish.description %}
+                        <p class="text-sm text-[var(--text-muted)] mb-3 line-clamp-3">
+                          {{ dish.description }}
+                        </p>
+                      {% endif %}
+                    </div>
+
+                    <div class="flex justify-between items-center mt-auto">
+                      <p class="text-[var(--brand-gold)] font-semibold">₱{{ dish.price|number_format(2, '.', ',') }}</p>
+                      <div class="flex items-center space-x-2">
+                        <button type="button" class="decrease bg-gray-700 text-[var(--brand-gold)] px-2 py-1 rounded-md hover:bg-gray-600 transition" data-id="{{ dish.id }}">-</button>
+                        <input type="number"
+                               id="dish-{{ dish.id }}"
+                               name="dishes[{{ dish.id }}]"
+                               value="0"
+                               min="0"
+                               max="10"
+                               data-price="{{ dish.price }}"
+                               class="dish-quantity w-12 text-center bg-[#1f1f1f] border border-[var(--brand-gold)]/40 rounded-md text-[var(--brand-gold)] focus:outline-none">
+                        <button type="button" class="increase bg-gray-700 text-[var(--brand-gold)] px-2 py-1 rounded-md hover:bg-gray-600 transition" data-id="{{ dish.id }}">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {# --- Total --- #}
+    <div class="mt-12 text-right border-t border-[var(--brand-gold)]/30 pt-6">
+      <p class="text-2xl text-[var(--brand-gold)] font-semibold">
+        Total: ₱<span id="total-price">0.00</span>
+      </p>
+    </div>
+
+    {# --- Special Requests --- #}
+    <div class="mt-8">
+      {{ form_label(form.specialRequest, 'Special Requests or Substitutions', {'label_attr': {'class': 'block text-sm text-[var(--brand-gold)] mb-2'}}) }}
+      {{ form_widget(form.specialRequest, {
+        'attr': {
+          'rows': '3',
+          'placeholder': 'Any preferences or substitutions...',
+          'class': 'w-full rounded-lg bg-[#1f1f1f] border border-[var(--brand-gold)]/30 p-3 resize-none text-[var(--brand-gold)] focus:outline-none'
+        }
+      }) }}
+    </div>
+
+    {# --- Buttons --- #}
+    <div class="flex justify-between items-center pt-8 border-t border-[var(--brand-gold)]/20 mt-10">
+      <a href="{{ path('customer_menu') }}"
+         class="border border-[var(--brand-gold)]/50 text-[var(--brand-gold)] px-6 py-2 rounded-md hover:bg-[var(--brand-gold)] hover:text-black transition font-medium">
+        Back to Menu
+      </a>
+
+      <button type="submit"
+              class="bg-[var(--brand-gold)] hover:bg-yellow-600 text-black font-semibold px-8 py-3 rounded-md transition shadow-md">
+        Submit Order
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const updateTotal = () => {
+      let total = 0;
+      document.querySelectorAll('.dish-quantity').forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        const price = parseFloat(input.dataset.price);
+        total += qty * price;
+      });
+      document.getElementById('total-price').textContent = total.toFixed(2);
+    };
+
+    document.querySelectorAll('.increase').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const input = document.getElementById(`dish-${id}`);
+        input.value = Math.min(parseInt(input.value) + 1, 10);
+        updateTotal();
+      });
+    });
+
+    document.querySelectorAll('.decrease').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const input = document.getElementById(`dish-${id}`);
+        input.value = Math.max(parseInt(input.value) - 1, 0);
+        updateTotal();
+      });
+    });
+
+    document.querySelectorAll('.dish-quantity').forEach(input => {
+      input.addEventListener('input', updateTotal);
+    });
+  });
+</script>
+{% endblock %}

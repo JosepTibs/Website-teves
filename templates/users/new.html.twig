@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}Create User{% endblock %}
+
+{% block body %}
+<style>
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px 20px;
+        margin-bottom: 20px;
+    }
+    .form-grid label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #444;
+    }
+    .form-grid input, .form-grid select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #bbb;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .btn-actions {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 20px;
+    }
+    .btn-actions a,
+    .btn-actions button {
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .btn-create { background-color: #28a745; color: white; }
+    .btn-create:hover { background-color: #218838; }
+    .btn-back { background-color: #007bff; color: white; }
+    .btn-back:hover { background-color: #0069d9; }
+</style>
+
+<div class="edit-container">
+    <h1>Create User</h1>
+
+    <div class="form-grid">
+        {{ include('users/_form.html.twig', {'button_label': 'Create'}) }}
+    </div>
+
+
+    <div class="btn-actions">
+        <a href="{{ path('app_users_index') }}" class="btn-back">⬅ Back to list</a>
+    </div>
+</div>
+{% endblock %}

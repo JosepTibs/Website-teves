@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Dish — Le Fromage{% endblock %}
+
+{% block body %}
+<div class="max-w-3xl mx-auto p-8 bg-[var(--bg-darker)] rounded-xl shadow-lg border border-[var(--brand-gold)]/30 mt-10">
+
+  <h1 class="text-3xl font-semibold text-[var(--brand-gold)] mb-6 text-center tracking-wider">
+    ✏️ Edit Dish
+  </h1>
+
+  <p class="text-[var(--text-muted)] text-center mb-10">
+    Update the details of your dish and click <strong>“Update Dish”</strong> to save changes.
+  </p>
+
+  <div class="space-y-6">
+    {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+      <div>
+        {{ form_label(form.name, 'Dish Name', {'label_attr': {'class': 'block text-sm text-[var(--text-light)] mb-2'}}) }}
+        {{ form_widget(form.name, {'attr': {'class': 'w-full p-3 bg-[var(--bg-input)] text-[var(--text-light)] border border-[var(--brand-gold)]/40 rounded-lg focus:ring-2 focus:ring-[var(--brand-gold)]'}}) }}
+      </div>
+
+      <div>
+        {{ form_label(form.price, 'Price (₱)', {'label_attr': {'class': 'block text-sm text-[var(--text-light)] mb-2'}}) }}
+        {{ form_widget(form.price, {'attr': {'class': 'w-full p-3 bg-[var(--bg-input)] text-[var(--text-light)] border border-[var(--brand-gold)]/40 rounded-lg focus:ring-2 focus:ring-[var(--brand-gold)]'}}) }}
+      </div>
+
+      <div>
+        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'block text-sm text-[var(--text-light)] mb-2'}}) }}
+        {{ form_widget(form.description, {'attr': {'rows': '3', 'class': 'w-full p-3 bg-[var(--bg-input)] text-[var(--text-light)] border border-[var(--brand-gold)]/40 rounded-lg focus:ring-2 focus:ring-[var(--brand-gold)]'}}) }}
+      </div>
+
+      <div>
+        {{ form_label(form.category, 'Category', {'label_attr': {'class': 'block text-sm text-[var(--text-light)] mb-2'}}) }}
+        {{ form_widget(form.category, {'attr': {'class': 'w-full p-3 bg-[var(--bg-input)] text-[var(--text-light)] border border-[var(--brand-gold)]/40 rounded-lg focus:ring-2 focus:ring-[var(--brand-gold)]'}}) }}
+      </div>
+
+      <div>
+        {{ form_label(form.image, 'Upload New Image', {'label_attr': {'class': 'block text-sm text-[var(--text-light)] mb-2'}}) }}
+        {{ form_widget(form.image, {'attr': {'class': 'w-full text-[var(--text-light)] border border-[var(--brand-gold)]/30 rounded-lg p-2 bg-[var(--bg-input)]'}}) }}
+      </div>
+
+      <div class="flex justify-between items-center pt-6">
+        <a href="{{ path('staff_menu') }}" class="text-[var(--brand-gold)] hover:underline text-sm">
+          ← Back to list
+        </a>
+
+        <button type="submit" class="bg-[var(--brand-gold)] hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-lg transition">
+          Update Dish
+        </button>
+      </div>
+    {{ form_end(form) }}
+  </div>
+
+  <hr class="my-8 border-[var(--brand-gold)]/30">
+
+  <div class="text-center">
+    <p class="text-[var(--text-muted)] mb-3">Need to remove this dish?</p>
+    {{ include('dish/_delete_form.html.twig') }}
+  </div>
+</div>
+{% endblock %}

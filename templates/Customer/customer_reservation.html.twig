@@ -1,0 +1,98 @@
+{% extends 'Customer/base_customer.html.twig' %}
+
+{% block title %}Reserve a Table — Le Fromage{% endblock %}
+
+{% block body %}
+<h1 class="text-3xl font-semibold text-[var(--brand-gold)] mb-8 tracking-wide text-center">
+  Reserve a Table
+</h1>
+
+{% for message in app.flashes('success') %}
+  <div class="mb-6 p-4 bg-green-800/30 border border-green-500/50 text-green-300 rounded-md shadow-sm">
+    {{ message }}
+  </div>
+{% endfor %}
+
+{{ form_start(form, {'attr': {'class': 'space-y-6 text-[var(--text-light)] max-w-3xl mx-auto'}}) }}
+
+  {{ form_row(form.Customer_Name, {'attr': {'class': 'input-field'}}) }}
+  {{ form_row(form.email, {'attr': {'class': 'input-field'}}) }}
+  {{ form_row(form.phone_number, {'attr': {'class': 'input-field'}}) }}
+
+  <div class="grid grid-cols-2 gap-4">
+    {{ form_row(form.Date, {'attr': {'class': 'input-field'}}) }}
+    {{ form_row(form.guests, {'attr': {'class': 'input-field'}}) }}
+  </div>
+
+  {{ form_row(form.table_number, {'attr': {'class': 'input-field'}}) }}
+  {{ form_row(form.special_requests, {'attr': {'rows': 3, 'class': 'input-field resize-none'}}) }}
+
+ <div class="flex justify-between items-center pt-6">
+  <button
+    type="submit"
+    class="bg-[var(--brand-gold)] hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-md transition shadow-md"
+  >
+    Confirm Reservation
+  </button>
+
+  <a
+    href="{{ path('customer_menu') }}"
+    class="border border-[var(--brand-gold)]/50 text-[var(--brand-gold)] px-6 py-2 rounded-md hover:bg-[var(--brand-gold)] hover:text-black transition font-medium"
+  >
+    Add Pre-Order
+  </a>
+</div>
+
+
+{{ form_end(form) }}
+
+{% block styles %}
+  <style>
+    /* --- Overall form appearance --- */
+  form *:not(button):not(a) {
+  background-color: #2f2f2f !important;
+  color: var(--text-light) !important;
+  border-color: rgba(212, 175, 55, 0.3) !important;
+  box-shadow: none !important;
+}
+
+
+    label {
+      color: var(--brand-gold) !important;
+      font-weight: 500;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      background-color: #2f2f2f;
+      color: var(--text-light);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .input-field:focus {
+      border-color: var(--brand-gold);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4);
+      outline: none;
+    }
+
+    input[type="date"],
+    input[type="datetime-local"],
+    input[type="time"] {
+      color-scheme: dark;
+    }
+
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    input:hover,
+    textarea:hover,
+    select:hover {
+      border-color: var(--brand-gold);
+    }
+  </style>
+{% endblock %}
+{% endblock %}

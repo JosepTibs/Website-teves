@@ -1,0 +1,147 @@
+{% extends 'Staff/base_staff.html.twig' %}
+
+{% block title %}Staff Dashboard — Le Fromage{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <!-- Main content -->
+  <section class="md:col-span-3 space-y-6">
+
+    <!-- Header / Quick Actions -->
+    <div class="flex flex-col sm:flex-row items-stretch gap-4">
+      <a href="{{ path('staff_orders_index') }}"
+         class="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-[var(--brand-gold)] text-[var(--brand-black)] font-medium hover:brightness-95 focus-gold">
+        Manage Orders
+      </a>
+      <a href="{{ path('staff_reservations_index') }}"
+         class="flex-1 inline-flex items-center justify-center gap-3 px-4 py-3 rounded-lg card border border-[var(--border-light)] text-[var(--text-light)] hover:bg-[var(--bg-dark)]">
+        Manage Reservations
+      </a>
+      <a href="#"
+         class="inline-flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border-light)] card text-[var(--text-light)] hover:bg-[var(--bg-dark)]">
+        Logout
+      </a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="card p-4 text-center">
+        <div class="text-xs text-[var(--text-muted)] uppercase tracking-wide">Pending Orders</div>
+        <div class="mt-2 text-2xl font-semibold text-[var(--brand-gold)]">{{ pendingOrders }}</div>
+        <div class="text-sm text-[var(--text-muted)]">Awaiting preparation</div>
+      </div>
+
+      <div class="card p-4 text-center">
+        <div class="text-xs text-[var(--text-muted)] uppercase tracking-wide">In Progress</div>
+        <div class="mt-2 text-2xl font-semibold text-[var(--text-light)]">{{ inProgressOrders }}</div>
+        <div class="text-sm text-[var(--text-muted)]">Currently cooking</div>
+      </div>
+
+      <div class="card p-4 text-center">
+        <div class="text-xs text-[var(--text-muted)] uppercase tracking-wide">Ready</div>
+        <div class="mt-2 text-2xl font-semibold text-[var(--brand-gold)]">{{ readyOrders }}</div>
+        <div class="text-sm text-[var(--text-muted)]">For pickup or delivery</div>
+      </div>
+    </div>
+
+    <!-- Orders Section -->
+    <section class="card p-4 shadow">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-[var(--brand-gold)]">Recent Orders</h2>
+        <a href="{{ path('staff_orders_index') }}" class="text-sm text-[var(--text-muted)] hover:text-[var(--brand-gold)]">View all</a>
+      </div>
+
+      {% if orders is empty %}
+        <p class="text-sm text-[var(--text-muted)]">No active orders.</p>
+      {% else %}
+        <ul class="divide-y divide-[var(--brand-gold)]/10">
+          {% for order in orders|slice(0,5) %}
+            <li class="py-3 flex justify-between items-center">
+              <div>
+                <div class="font-medium text-[var(--text-light)]">Order #{{ order.id }}</div>
+                <div class="text-xs text-[var(--text-muted)]">
+                  {{ order.customerName ?? 'Guest' }} — 
+                  {% for dish in order.dishes %}
+                    {{ dish.name }}{% if not loop.last %}, {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-sm {% if order.status == 'Pending' %}text-yellow-400{% elseif order.status == 'Preparing' %}text-blue-400{% elseif order.status == 'Ready' %}text-green-400{% else %}text-[var(--text-muted)]{% endif %}">
+                  {{ order.status }}
+                </span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+
+    <!-- Reservations Section -->
+    <section class="card p-4 shadow">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-[var(--brand-gold)]">Upcoming Reservations</h2>
+        <a href="{{ path('staff_reservations_index') }}" class="text-sm text-[var(--text-muted)] hover:text-[var(--brand-gold)]">View all</a>
+      </div>
+
+      {% if reservations is empty %}
+        <p class="text-sm text-[var(--text-muted)]">No reservations found.</p>
+      {% else %}
+        <ul class="space-y-2">
+          {% for reservation in reservations|slice(0,5) %}
+            <li class="p-3 rounded-md border border-[var(--brand-gold)]/20 bg-[var(--bg-darker)] flex justify-between items-center">
+              <div>
+                <div class="font-semibold">
+                  Table {{ reservation.tableNumber ?? 'N/A' }} — {{ reservation.date|date('M d, Y h:i A') }}
+                </div>
+                <div class="text-xs text-[var(--text-muted)]">
+                  {{ reservation.customerName ?? 'Unknown' }} • {{ reservation.guests }} guests
+                </div>
+              </div>
+              <span class="text-sm {% if reservation.status == 'Pending' %}text-yellow-400{% elseif reservation.status == 'Confirmed' %}text-green-400{% elseif reservation.status == 'Declined' %}text-red-400{% endif %}">
+                {{ reservation.status }}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+  </section>
+
+  <!-- Sidebar -->
+  <aside class="space-y-4">
+    <div class="card p-4 shadow">
+      <div class="flex items-center gap-3">
+        <div class="w-14 h-14 rounded-full overflow-hidden">
+          <img src="/images/default-avatar.png" alt="avatar" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <div class="font-medium text-[var(--text-light)]">Staff Member</div>
+          <div class="text-xs text-[var(--text-muted)]">staff@lefromage.com</div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <a href="#" class="block text-sm px-3 py-2 rounded-md border border-[var(--border-light)] text-center text-[var(--text-light)] hover:bg-[var(--brand-gold)] hover:text-[var(--bg-dark)]">
+          My Profile
+        </a>
+      </div>
+    </div>
+
+    <div class="card p-4 shadow">
+      <h4 class="font-semibold mb-2 text-[var(--brand-gold)]">Quick Links</h4>
+      <ul class="space-y-2 text-sm text-[var(--text-muted)]">
+        <li><a href="{{ path('staff_orders_index') }}">Orders Overview</a></li>
+        <li><a href="{{ path('staff_reservations_index') }}">Reservations</a></li>
+        <li><a href="#">Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="card p-4 shadow text-sm">
+      <h4 class="font-semibold mb-2 text-[var(--brand-gold)]">Kitchen Notes</h4>
+      <p class="text-[var(--text-muted)]">
+        Always check for special requests and allergies in each order to ensure the best service for our customers.
+      </p>
+    </div>
+  </aside>
+</div>
+{% endblock %}
